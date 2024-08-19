@@ -98,8 +98,8 @@ it('validates email format', function () {
 });
 
 it('respects rate limiting', function () {
-    // Make 5 requests (the limit we set)
-    for ($i = 0; $i < 5; $i++) {
+    // Make 10 requests (the hourly limit we set)
+    for ($i = 0; $i < 10; $i++) {
         $this->postJson('/api/feedback', [
             'experiment' => 'Rate Limit Test',
             'feedback' => 'Test feedback ' . $i,
@@ -108,7 +108,7 @@ it('respects rate limiting', function () {
         ])->assertStatus(201);
     }
 
-    // The 6th request should be rate limited
+    // The 11th request should be rate limited
     $response = $this->postJson('/api/feedback', [
         'experiment' => 'Rate Limit Test',
         'feedback' => 'This should be rate limited',
@@ -120,8 +120,8 @@ it('respects rate limiting', function () {
 });
 
 it('allows requests after rate limit window', function () {
-    // Make 5 requests
-    for ($i = 0; $i < 5; $i++) {
+    // Make 10 requests
+    for ($i = 0; $i < 10; $i++) {
         $this->postJson('/api/feedback', [
             'experiment' => 'Rate Limit Test',
             'feedback' => 'Test feedback ' . $i,
@@ -130,8 +130,8 @@ it('allows requests after rate limit window', function () {
         ])->assertStatus(201);
     }
 
-    // Simulate waiting for 1 minute
-    $this->travel(1)->minute();
+    // Simulate waiting for 1 hour
+    $this->travel(1)->hour();
 
     // This request should now be allowed
     $response = $this->postJson('/api/feedback', [

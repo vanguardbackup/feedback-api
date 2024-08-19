@@ -33,7 +33,6 @@ class FeedbackResource extends JsonResource
             'has_email' => $this->resource->hasEmailAddress(),
             'age_in_days' => $this->resource->getAgeInDays(),
             'created_at' => $this->resource->created_at->toIso8601String(),
-            'updated_at' => $this->resource->updated_at->toIso8601String(),
         ];
     }
 }

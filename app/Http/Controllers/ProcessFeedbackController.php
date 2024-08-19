@@ -7,10 +7,22 @@ use App\Models\Feedback;
 use ConsoleTVs\Profanity\Facades\Profanity;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * ProcessFeedbackController handles the submission of user feedback.
+ *
+ * This controller is responsible for processing and storing user feedback
+ * about experiments. It applies profanity filtering and rate limiting.
+ */
 class ProcessFeedbackController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Handle the incoming feedback request.
+     *
+     * This method creates a new Feedback record with the provided data,
+     * applying profanity filtering to the feedback text.
+     *
+     * @param  FeedbackRequest  $request  The validated feedback request
+     * @return JsonResponse A JSON response indicating success
      */
     public function __invoke(FeedbackRequest $request): JsonResponse
     {
