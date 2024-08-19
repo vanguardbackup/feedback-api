@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Database\Factories\FeedbackFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * Class Feedback
- *
+ * Represents user feedback for experiments in the Vanguard system.
  *
  * @property int $id
  * @property string $experiment
@@ -28,20 +28,13 @@ use Illuminate\Support\Str;
  */
 class Feedback extends Model
 {
+    /** @use HasFactory<FeedbackFactory> */
     use HasFactory;
 
-    /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array<string>
-     */
+    /** @var array<string> */
     protected $guarded = [];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
+    /** @var array<string, string> */
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -49,6 +42,9 @@ class Feedback extends Model
 
     /**
      * Scope a query to only include feedback for a specific experiment.
+     *
+     * @param  Builder<Feedback>  $query
+     * @return Builder<Feedback>
      */
     public function scopeForExperiment(Builder $query, string $experiment): Builder
     {
@@ -57,6 +53,9 @@ class Feedback extends Model
 
     /**
      * Scope a query to only include feedback for a specific PHP version.
+     *
+     * @param  Builder<Feedback>  $query
+     * @return Builder<Feedback>
      */
     public function scopeForPhpVersion(Builder $query, string $version): Builder
     {
@@ -65,6 +64,9 @@ class Feedback extends Model
 
     /**
      * Scope a query to only include feedback for a specific Vanguard version.
+     *
+     * @param  Builder<Feedback>  $query
+     * @return Builder<Feedback>
      */
     public function scopeForVanguardVersion(Builder $query, string $version): Builder
     {
@@ -73,6 +75,9 @@ class Feedback extends Model
 
     /**
      * Scope a query to only include recent feedback.
+     *
+     * @param  Builder<Feedback>  $query
+     * @return Builder<Feedback>
      */
     public function scopeRecent(Builder $query, int $days = 7): Builder
     {
@@ -81,6 +86,9 @@ class Feedback extends Model
 
     /**
      * Scope a query to only include feedback with an email address.
+     *
+     * @param  Builder<Feedback>  $query
+     * @return Builder<Feedback>
      */
     public function scopeWithEmail(Builder $query): Builder
     {
@@ -89,6 +97,9 @@ class Feedback extends Model
 
     /**
      * Scope a query to only include feedback without an email address.
+     *
+     * @param  Builder<Feedback>  $query
+     * @return Builder<Feedback>
      */
     public function scopeWithoutEmail(Builder $query): Builder
     {
@@ -96,7 +107,7 @@ class Feedback extends Model
     }
 
     /**
-     * Get a summary of the feedback.
+     * Get a summary of the feedback content.
      */
     public function getSummary(int $length = 100): string
     {
@@ -128,11 +139,14 @@ class Feedback extends Model
             return null;
         }
 
-        return Str::after($this->email_address, '@');
+        return Str::after($this->email_address ?? '', '@');
     }
 
     /**
      * Scope a query to only include feedback from a specific email domain.
+     *
+     * @param  Builder<Feedback>  $query
+     * @return Builder<Feedback>
      */
     public function scopeFromEmailDomain(Builder $query, string $domain): Builder
     {
@@ -140,11 +154,11 @@ class Feedback extends Model
     }
 
     /**
-     * Get the feedback age in days.
+     * Get the age of the feedback in days.
      */
     public function getAgeInDays(): int
     {
-        return $this->created_at->diffInDays();
+        return (int) $this->created_at->diffInDays();
     }
 
     /**

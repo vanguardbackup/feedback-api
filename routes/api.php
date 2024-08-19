@@ -5,8 +5,11 @@ use App\Http\Controllers\SearchFeedbackController;
 use App\Http\Controllers\ViewFeedbackController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('feedback', ProcessFeedbackController::class)->middleware('throttle:5,1');
+Route::prefix('feedback')->group(function () {
+    Route::post('/', ProcessFeedbackController::class)->middleware('throttle:5,1');
 
-Route::get('feedback', ViewFeedbackController::class)->middleware('api.key');
-
-Route::get('feedback/search', SearchFeedbackController::class)->middleware('api.key');
+    Route::middleware('api.key')->group(function () {
+        Route::get('/', ViewFeedbackController::class);
+        Route::get('search', SearchFeedbackController::class);
+    });
+});

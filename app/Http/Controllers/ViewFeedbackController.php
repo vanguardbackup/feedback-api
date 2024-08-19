@@ -23,7 +23,7 @@ class ViewFeedbackController extends Controller
         $this->applyFilters($query, $request);
         $this->applySorting($query, $request);
 
-        $perPage = (int) $request->input('per_page', 15);
+        $perPage = $this->getPerPage($request);
         $feedbacks = $query->paginate($perPage);
 
         return FeedbackResource::collection($feedbacks);
@@ -31,6 +31,8 @@ class ViewFeedbackController extends Controller
 
     /**
      * Apply filters to the query based on request parameters.
+     *
+     * @param  Builder<Feedback>  $query
      */
     private function applyFilters(Builder $query, Request $request): void
     {
@@ -49,8 +51,8 @@ class ViewFeedbackController extends Controller
 
         if ($request->filled('has_email')) {
             $hasEmail = filter_var($request->input('has_email'), FILTER_VALIDATE_BOOLEAN);
-            $query->when($hasEmail, fn ($q) => $q->whereNotNull('email_address'),
-                fn ($q) => $q->whereNull('email_address'));
+            $query->when($hasEmail, fn (Builder $q) => $q->whereNotNull('email_address'),
+                fn (Builder $q) => $q->whereNull('email_address'));
         }
 
         if ($request->filled('from_date')) {
@@ -68,18 +70,44 @@ class ViewFeedbackController extends Controller
 
     /**
      * Apply sorting to the query.
+     *
+     * @param  Builder<Feedback>  $query
      */
     private function applySorting(Builder $query, Request $request): void
     {
         $sortField = $request->input('sort_by', 'created_at');
-        $sortDirection = $request->input('sort_direction', 'desc');
+        $sortDirection = $this->getSortDirection($request);
 
         $allowedSortFields = ['created_at', 'experiment', 'php_version', 'vanguard_version'];
 
-        if (in_array($sortField, $allowedSortFields, true)) {
+        if (is_string($sortField) && in_array($sortField, $allowedSortFields, true)) {
             $query->orderBy($sortField, $sortDirection);
         } else {
             $query->latest();
         }
+    }
+
+    /**
+     * Get the number of items per page.
+     */
+    private function getPerPage(Request $request): int
+    {
+        $perPage = $request->input('per_page');
+
+        return is_numeric($perPage) ? max(1, min(100, (int) $perPage)) : 15;
+    }
+
+    /**
+     * Get the sort direction.
+     */
+    private function getSortDirection(Request $request): string
+    {
+        $direction = $request->input('sort_direction');
+        if (! is_string($direction)) {
+            return 'desc';
+        }
+        $direction = strtolower($direction);
+
+        return in_array($direction, ['asc', 'desc'], true) ? $direction : 'desc';
     }
 }

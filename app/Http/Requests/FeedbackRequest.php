@@ -5,6 +5,9 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Handles validation for feedback submissions.
+ */
 class FeedbackRequest extends FormRequest
 {
     /**
@@ -58,11 +61,25 @@ class FeedbackRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            'experiment' => trim($this->experiment),
-            'feedback' => trim($this->feedback),
-            'php_version' => trim($this->php_version),
-            'vanguard_version' => trim($this->vanguard_version),
-            'email_address' => $this->email_address ? trim($this->email_address) : null,
+            'experiment' => $this->trimInput('experiment'),
+            'feedback' => $this->trimInput('feedback'),
+            'php_version' => $this->trimInput('php_version'),
+            'vanguard_version' => $this->trimInput('vanguard_version'),
+            'email_address' => $this->trimInput('email_address'),
         ]);
+    }
+
+    /**
+     * Trim the input if it's a string, or return null.
+     */
+    private function trimInput(string $key): ?string
+    {
+        $value = $this->input($key);
+
+        if (! is_string($value)) {
+            return null;
+        }
+
+        return trim($value) ?: null;
     }
 }

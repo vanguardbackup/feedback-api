@@ -53,6 +53,30 @@ it('can submit feedback with email', function () {
     ]);
 });
 
+it('filters any profanity in the submission', function () {
+    $response = $this->postJson('/api/feedback', [
+        'experiment' => 'Test Experiment',
+        'feedback' => 'This feedback is fucking terrible.',
+        'php_version' => '8.1',
+        'vanguard_version' => '1.0.0',
+        'email_address' => 'test@example.com',
+    ]);
+
+    $response->assertStatus(201)
+        ->assertJson([
+            'message' => 'Experiment feedback successfully submitted',
+            'status' => 'success',
+        ]);
+
+    $this->assertDatabaseHas('feedback', [
+        'experiment' => 'Test Experiment',
+        'feedback' => 'This feedback is ******* terrible.',
+        'php_version' => '8.1',
+        'vanguard_version' => '1.0.0',
+        'email_address' => 'test@example.com',
+    ]);
+});
+
 it('validates required fields', function () {
     $response = $this->postJson('/api/feedback', []);
 
