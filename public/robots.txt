@@ -1,2 +1,12 @@
+# robots.txt for Vanguard Feedback API
+
+# This file is used to give instructions to web crawlers and other web robots
+# about which parts of our site they are allowed to crawl and index.
+
+# Disallow all robots from accessing our API endpoints
 User-agent: *
-Disallow:
+Disallow: /api/
+
+# Specifically disallow access to feedback submission and viewing endpoints
+Disallow: /api/feedback
+Disallow: /api/feedback/search

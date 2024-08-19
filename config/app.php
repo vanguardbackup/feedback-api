@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Vanguard Experiments Feedback'),
 
     /*
     |--------------------------------------------------------------------------
@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+   |--------------------------------------------------------------------------
+   | API Key
+   |--------------------------------------------------------------------------
+   |
+   | This key is used for authenticating API requests to your application.
+   | It should be kept secret and only shared with trusted clients. You
+   | can generate a secure key using `php artisan key:generate --show`.
+   |
+   */
+
+    'api_key' => env('API_KEY'),
 ];
