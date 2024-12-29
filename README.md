@@ -19,7 +19,7 @@ Vanguard Experiment Feedback API is a lightweight Laravel application designed t
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-repo/vanguard-feedback-collector.git
+   git clone https://github.com/vanguardbackup/feedback-api.git
    ```
 
 2. Install dependencies:
@@ -65,4 +65,4 @@ This project is licensed under the MIT Licence - see the [LICENCE](LICENSE) file
 
 ## Contact
 
-For any queries or support, please contact us at support@vanguardbackup.com.
+For any queries or support, please contact us at support@vanguardbackup.com or open an issue.
